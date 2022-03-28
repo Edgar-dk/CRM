@@ -8,9 +8,9 @@
         <setting name="logImpl" value="STDOUT_LOGGING"/>
     </settings>
     <!--2.别名-->
-<!--    <typeAliases>-->
-<!--        <package name="com.bjpowernode.crm.model"/>-->
-<!--    </typeAliases>-->
+    <typeAliases>
+        <package name="com.sias.crm"/>
+    </typeAliases>
 <!--    &lt;!&ndash;3.映射起文件-->
 <!--          在&ndash;&gt;-->
 <!--    <mappers>-->
