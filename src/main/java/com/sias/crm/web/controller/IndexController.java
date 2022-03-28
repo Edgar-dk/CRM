@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class IndexController {
 
+
+    /*修订稿会死的撒*/
     @RequestMapping("/")
     public String  index(){
         /*01.请求转发*/
