@@ -5,7 +5,7 @@
 </head>
 <body>
 	<script type="text/javascript">
-		document.location.href = "settings/qx/user/login.html";
+		document.location.href = "settings/qx/user/login";
 	</script>
 <h1>你好，这是一个首页</h1>
 </body>
