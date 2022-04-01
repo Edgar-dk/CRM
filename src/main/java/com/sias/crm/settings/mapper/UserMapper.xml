@@ -232,7 +232,9 @@
         和实体类的属性不一样，使用的参数是一个跨度，保持两者是一样的
         * 被一个传递过来的数据替代了，这个替代的是要查询的全部信息-->
   <select id="selectUserByLoginActAndPwd" parameterType="map" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"></include>
-    from tbl_user where login_act=#{loginAct} and login_pwd=#{loginPwd};
+    select
+    <include refid="Base_Column_List"/>
+    from tbl_user
+    where login_act=#{loginAct} and login_pwd=#{loginPwd}
   </select>
 </mapper>

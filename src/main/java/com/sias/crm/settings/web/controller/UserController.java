@@ -10,7 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,19 +30,21 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping("/settings/qx/user/tologin")
+    @RequestMapping("/settings/qx/user/toLogin.do")
     public String HelloController(){
         return "settings/qx/user/login";
     }
 
-    @RequestMapping("/settings/qx/user/login.do")
 
+
+    @RequestMapping("/settings/qx/user/login.do")
     /*把从数据库中返回过来的数据按照json的形式返回,这个返回的对象
     * 现在还不知道是什么，所以在返回的位置上写一个Object即可，代表的意思是
     * 返回一个Object这个类
     * */
     @ResponseBody
-    public Object login(String loginAct , String loginPwd , String isRemPwd, HttpServletRequest request){
+    public Object login(String loginAct , String loginPwd , String isRemPwd, HttpServletRequest request,
+                        HttpServletResponse response, HttpSession session){
         /*01.传递过来的数据封装成一个Map对象*/
         HashMap<Object, Object> map = new HashMap<>();
         map.put("loginAct",loginAct);
@@ -66,10 +71,10 @@ public class UserController {
         }else {
 
             /*04.把当前的时间转换成字符串的形式*/
-            String format = DataUtils.formateDateTime(new Date());
+
             /*05.format就是当前时间的字符串形式，然后在和User中的时间比较
             *    比较两者的大小，*/
-            if(format.compareTo(user2.getExpireTime())>0){
+            if(DataUtils.formateDateTime(new Date()).compareTo(user2.getExpireTime())>0){
                 object.setCode(Constant.ReTURN_OBJECT_CODE_FAIL);
                 object.setMessage("账号过期");
             }else if("0".equals(user2.getLockState())){
@@ -86,8 +91,35 @@ public class UserController {
             }else {
                 /*08.上面的条件满足完之后才表示登陆成功*/
                 object.setCode(Constant.ReTURN_OBJECT_CODE_SUCCESS);
+
+
+                /*09.控制层数据到实图层
+                *    用的是作用域共享数据*/
+                session.setAttribute(Constant.SESSION_USER,user2);
+
+
+
+                /*10.把user中的数据放到cookie中，保存到浏览器上
+                *    字符串比较的话用equals的方式*/
+                if ("true".equals(isRemPwd)){
+                    Cookie c1 = new Cookie("loginAct",user2.getLoginAct());
+                    c1.setMaxAge(10*24*60*60);
+                    response.addCookie(c1);
+                    Cookie c2 = new Cookie("loginPwd",loginPwd);
+                    c2.setMaxAge(10*24*60*60);
+                    response.addCookie(c2);
+                }
+
             }
         }
         return object;
     }
 }
+
+
+
+
+
+
+
+

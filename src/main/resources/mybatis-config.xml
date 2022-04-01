@@ -13,8 +13,8 @@
     </typeAliases>
     <!--3.映射起文件
           在-->
-    <mappers>
-<!--        <package name="com.sias.crm.mapper"/>-->
-        <mapper class="com.sias.crm.settings.mapper.UserMapper"></mapper>
-    </mappers>
+<!--    <mappers>-->
+<!--&lt;!&ndash;        <package name="com.sias.crm.mapper"/>&ndash;&gt;-->
+<!--        <mapper class="com.sias.crm.settings.mapper.UserMapper"></mapper>-->
+<!--    </mappers>-->
 </configuration>

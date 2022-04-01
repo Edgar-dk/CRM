@@ -23,6 +23,15 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 		*   的瞬间就是点击按钮，之后执行的有了点击按钮，才有click
 		*   $是接收里面的参数*/
 		$(function (){
+
+			/*widow把这个窗口转成jQuery对象，keydown是这个窗口上的键盘
+			* e相当于键盘，把这个键盘传进来，在里面做一个筛选，筛选的是13
+			* 的这个案件，点击这个13的案件，就执行下面的函数*/
+			$(window).keydown(function (e){
+				if (e.keyCode==13){
+					$("#loginBtn").click();
+				}
+			});
 			$("#loginBtn").click(function (){
 				/*3.收集数据
 				    根据这个id来获取里面的数据
@@ -54,7 +63,9 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					*   如果说页面发送的数据和数据库中的数据
 					*   匹配正确的话，就把跳转，那么怎么知道
 					*   这个匹配正确的状态，把页面的code拿过来
-					*   这个code就是成功与否的标志，1成功，0失败*/
+					*   这个code就是成功与否的标志，1成功，0失败
+					*   这个是登陆页面的一个responsebody起的作用
+					*   把这个对象的状态放回到这里*/
 					success:function (data){
 						if(data.code=="1"){
 							/*7.window是当前的窗口，location是浏览器的地址栏，href是地址信息
@@ -64,6 +75,11 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 							/*8.不成功的话，显示错误的信息*/
 							$("#msg").text(data.message);
 						}
+					},
+					/*9.在ajax执行之前去执行这个，true的话，才去执行ajax，false的话不执行
+					*   相当于一个短信验证的作用*/
+					beforeSend:function (){
+						$("#msg").text("正在验证中......");
 					}
 				});
 			});
