@@ -1,7 +1,8 @@
 <!DOCTYPE html><%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
 String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";
-
+/*注意：在jap中不可以像Java后端的那样，把一个常量封装到一个方法中，jsp是展示下页面上的，常量的话，只能写
+* 具体的数字*/
 %>
 <html>
 <head>
@@ -10,6 +11,64 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+	<%--1.选择添加事件
+	      这个事件的执行是一个按钮事件，想要去执行的话，需要具体的
+	      步骤，哪点击这个按钮要干什么，当然是获取页面上的数据，写的是JS数据
+	      所以在上面一个JS标签里面，这个是最后执行的--%>
+	<script type="text/javascript">
+		/*2.解释一下，为什么是一个函数
+		*   因为这事件想要执行的话，需要在一个函数中，写上一个大的函数
+		*   所有的子函数事件在里面执行即可，怎么获取这个子函数，就需要
+		*   根据子标签的名字（id）的形式获取，获取之后要干什么，这个干什么
+		*   的瞬间就是点击按钮，之后执行的有了点击按钮，才有click
+		*   $是接收里面的参数*/
+		$(function (){
+			$("#loginBtn").click(function (){
+				/*3.收集数据
+				    根据这个id来获取里面的数据
+				*   最外面的作用，是去掉里面的空格，前面的是
+				*   用一个变量来接收*/
+				var loginAct=$.trim($("#loginAct").val());
+				var loginPwd=$.trim($("#loginPwd").val());
+				var isRemPwd=$("#isRemPwd").prop("checked");
+				/*4.表单验证*/
+				if (loginAct==""){
+					alert("账户不能为空");
+					/*01.空的话，结束函数执行，下面的都不执行*/
+					return;
+				}if(loginPwd==""){
+					alert("密码不可以为空");
+					return;
+				}
+				/*5.发送请求*/
+				$.ajax({
+					url:'settings/qx/user/login.do',
+					data:{
+						loginAct:loginAct,
+						loginPwd:loginPwd,
+						isRemPwd:isRemPwd,
+					},
+					type:'post',
+					dataType:'json',
+					/*6.转发页面
+					*   如果说页面发送的数据和数据库中的数据
+					*   匹配正确的话，就把跳转，那么怎么知道
+					*   这个匹配正确的状态，把页面的code拿过来
+					*   这个code就是成功与否的标志，1成功，0失败*/
+					success:function (data){
+						if(data.code=="1"){
+							/*7.window是当前的窗口，location是浏览器的地址栏，href是地址信息
+							*   后面的是具体的内容*/
+							window.location.href="workbench/index.do";
+						}else {
+							/*8.不成功的话，显示错误的信息*/
+							$("#msg").text(data.message);
+						}
+					}
+				});
+			});
+		});
+	</script>
 </head>
 <body>
 	<div style="position: absolute; top: 0px; left: 0px; width: 60%;">
@@ -27,19 +86,19 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 			<form action="workbench/index.html" class="form-horizontal" role="form">
 				<div class="form-group form-group-lg">
 					<div style="width: 350px;">
-						<input class="form-control" type="text" placeholder="用户名">
+						<input id="loginAct" class="form-control" type="text" placeholder="用户名">
 					</div>
 					<div style="width: 350px; position: relative;top: 20px;">
-						<input class="form-control" type="password" placeholder="密码">
+						<input id="loginPwd" class="form-control" type="password" placeholder="密码">
 					</div>
 					<div class="checkbox"  style="position: relative;top: 30px; left: 10px;">
 						<label>
-							<input type="checkbox"> 十天内免登录
+							<input id="isRemPwd" type="checkbox"> 十天内免登录
 						</label>
 						&nbsp;&nbsp;
 						<span id="msg"></span>
 					</div>
-					<button type="submit" class="btn btn-primary btn-lg btn-block"  style="width: 350px; position: relative;top: 45px;">登录</button>
+					<button type="button" id="loginBtn" class="btn btn-primary btn-lg btn-block"  style="width: 350px; position: relative;top: 45px;">登录</button>
 				</div>
 			</form>
 		</div>

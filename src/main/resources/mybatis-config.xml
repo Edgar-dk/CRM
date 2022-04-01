@@ -11,9 +11,10 @@
     <typeAliases>
         <package name="com.sias.crm"/>
     </typeAliases>
-<!--    &lt;!&ndash;3.映射起文件-->
-<!--          在&ndash;&gt;-->
-<!--    <mappers>-->
-<!--        <package name="com.bjpowernode.crm.mapper"/>-->
-<!--    </mappers>-->
+    <!--3.映射起文件
+          在-->
+    <mappers>
+<!--        <package name="com.sias.crm.mapper"/>-->
+        <mapper class="com.sias.crm.settings.mapper.UserMapper"></mapper>
+    </mappers>
 </configuration>

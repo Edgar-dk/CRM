@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User queryUserByLoginActAndPwd(Map map) {
-        User user1 = userMapper.selectUserByLoginActAndPwd(map);
-        return user1;
+        User user = userMapper.selectUserByLoginActAndPwd(map);
+        return user;
     }
 }
