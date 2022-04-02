@@ -39,6 +39,9 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 		
 		
 		window.open("main/index.html","workareaFrame");
+		$("#logoutBtn").click(function (){
+			window.location.href="settings/qx/user/logout.do";
+		});
 		
 	});
 	
@@ -131,7 +134,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="window.location.href='login.html';">确定</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal" id="logoutBtn">确定</button>
 				</div>
 			</div>
 		</div>

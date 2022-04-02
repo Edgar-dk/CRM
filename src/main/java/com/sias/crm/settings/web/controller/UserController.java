@@ -37,6 +37,7 @@ public class UserController {
 
 
 
+    /*2.登陆页面*/
     @RequestMapping("/settings/qx/user/login.do")
     /*把从数据库中返回过来的数据按照json的形式返回,这个返回的对象
     * 现在还不知道是什么，所以在返回的位置上写一个Object即可，代表的意思是
@@ -94,26 +95,59 @@ public class UserController {
 
 
                 /*09.控制层数据到实图层
-                *    用的是作用域共享数据*/
+                *    用的是作用域共享数据
+                *    第一个是key第二个是放到session
+                *    里面的数据，获取的时候，根据这个key
+                *    来获取*/
                 session.setAttribute(Constant.SESSION_USER,user2);
 
 
 
                 /*10.把user中的数据放到cookie中，保存到浏览器上
-                *    字符串比较的话用equals的方式*/
+                *    字符串比较的话用equals的方式
+                *    记住密码*/
                 if ("true".equals(isRemPwd)){
                     Cookie c1 = new Cookie("loginAct",user2.getLoginAct());
                     c1.setMaxAge(10*24*60*60);
                     response.addCookie(c1);
-                    Cookie c2 = new Cookie("loginPwd",loginPwd);
+                    Cookie c2 = new Cookie("loginPwd",user2.getLoginPwd());
                     c2.setMaxAge(10*24*60*60);
                     response.addCookie(c2);
+                }else {
+                    /*没有记住密码*/
+                    Cookie c1 = new Cookie("loginAct", "1");
+                    c1.setMaxAge(0);
+                    response.addCookie(c1);
+                    Cookie c2 = new Cookie("loginPwd", "1");
+                    c2.setMaxAge(0);
+                    response.addCookie(c2);
+
                 }
 
             }
         }
         return object;
     }
+
+    /*3.退出页面*/
+    @RequestMapping("/settings/qx/user/logout.do")
+    public String logout(HttpServletResponse response,
+                         HttpSession session){
+
+        /*01.退出页面
+        *    清空cookie*/
+        Cookie c1 = new Cookie("loginAct", "1");
+        c1.setMaxAge(0);
+        response.addCookie(c1);
+        Cookie c2 = new Cookie("loginPwd", "1");
+        c2.setMaxAge(0);
+        response.addCookie(c2);
+
+        /*02.销毁session*/
+        session.invalidate();
+        return "redirect:/"; //这是借助了SpringMvc的底层封装的代码来实现的，底层是response,sendRedirect("/")
+    }
+
 }
 
 

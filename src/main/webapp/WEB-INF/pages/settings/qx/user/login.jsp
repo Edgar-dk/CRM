@@ -1,4 +1,5 @@
 <!DOCTYPE html><%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
 String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";
 /*注意：在jap中不可以像Java后端的那样，把一个常量封装到一个方法中，jsp是展示下页面上的，常量的话，只能写
@@ -102,14 +103,23 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 			<form action="workbench/index.html" class="form-horizontal" role="form">
 				<div class="form-group form-group-lg">
 					<div style="width: 350px;">
-						<input id="loginAct" class="form-control" type="text" placeholder="用户名">
+						<input id="loginAct" class="form-control" value="${cookie.loginAct.value}" type="text" placeholder="用户名">
 					</div>
 					<div style="width: 350px; position: relative;top: 20px;">
-						<input id="loginPwd" class="form-control" type="password" placeholder="密码">
+						<input id="loginPwd" class="form-control" value="${cookie.loginPwd.value}" type="password" placeholder="密码">
 					</div>
 					<div class="checkbox"  style="position: relative;top: 30px; left: 10px;">
 						<label>
-							<input id="isRemPwd" type="checkbox"> 十天内免登录
+							<c:if test="${not empty cookie.loginAct and not empty cookie.loginPwd}">
+								<%--上面的条件成立的话，在执行下面的，把这样框选中--%>
+								<input id="isRemPwd" type="checkbox" checked>
+							</c:if>
+							<c:if test="${ empty cookie.loginAct or  empty cookie.loginPwd}">
+								<%--上面的条件成立的话，在执行下面的，不写的checked，表示
+								    不选中--%>
+								<input id="isRemPwd" type="checkbox" >
+							</c:if>
+							 十天内免登录
 						</label>
 						&nbsp;&nbsp;
 						<span id="msg"></span>
