@@ -2,6 +2,7 @@ package com.sias.crm.settings.mapper;
 
 import com.sias.crm.settings.domain.User;
 
+import java.util.List;
 import java.util.Map;
 
 public interface UserMapper {
@@ -58,4 +59,8 @@ public interface UserMapper {
     /*1.
     * 根据账户的密码和名称去查询*/
     User selectUserByLoginActAndPwd(Map map);
+
+
+    /*2.查询所有的用户*/
+    public List<User> selectAllUser();
 }

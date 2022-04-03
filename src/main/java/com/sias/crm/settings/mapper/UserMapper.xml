@@ -237,4 +237,13 @@
     from tbl_user
     where login_act=#{loginAct} and login_pwd=#{loginPwd}
   </select>
+
+
+
+  <!--2.查询所有的用户信息-->
+  <select id="selectAllUser" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tbl_user where lock_state='1'
+  </select>
 </mapper>
