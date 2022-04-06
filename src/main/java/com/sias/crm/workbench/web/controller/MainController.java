@@ -1,4 +1,4 @@
-package com.sias.crm.workbeach.web.controller;
+package com.sias.crm.workbench.web.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

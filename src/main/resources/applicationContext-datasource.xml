@@ -18,7 +18,7 @@ http://www.springframework.org/schema/beans ">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property name="username" value="root"/>
         <property name="password" value="root"/>
-        <property name="url" value="jdbc:mysql://localhost:3306/crm?useSSL=false&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
+        <property name="url" value="jdbc:mysql://127.0.0.1:3306/crm2008?useSSL=false&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
     </bean>
 
 
@@ -74,7 +74,8 @@ http://www.springframework.org/schema/beans ">
            就是扫描哪写基本的接口，去动态的访问数据库（生成操作数据库的代码）
            目的：因为你写了一个基本的操作数据的方式，所以需要扫描进来之后才可以使用-->
     <bean id="mapperScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.sias.crm.settings.mapper"/>
+        <property name="basePackage" value="com.sias.crm.settings.mapper,
+                                            com.sias.crm.workbench.mapper"/>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
 </beans>

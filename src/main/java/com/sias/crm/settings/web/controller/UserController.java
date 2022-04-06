@@ -30,6 +30,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    /*1.页面周转访问*/
     @RequestMapping("/settings/qx/user/toLogin.do")
     public String HelloController(){
         return "settings/qx/user/login";
@@ -63,15 +64,18 @@ public class UserController {
 
 
         /*03.上面的一个是数据库中的数据，下面的一个才是页面上的数据，最终放回的是，这个页面上的数据
-        *    返回到了浏览器，然后在做最终的判断*/
+        *    返回到了浏览器，然后在做最终的判断
+        *    创建的ReturnObject是一个为页面返回这个时候的状态
+        *    是成功的状态还是失败的状态*/
         ReturnObject object = new ReturnObject();
         if(user2==null){
-            /*03.密码和账户不想等*/
+            /*03.密码和账户不想等
+            *    设置当前失败的状态，放回数据的时候，告诉页面这个状态
+            *    页面根据这个状态知道了，发生了失败*/
             object.setCode(Constant.ReTURN_OBJECT_CODE_FAIL);
             object.setMessage("用户名或者是密码错误");
         }else {
 
-            /*04.把当前的时间转换成字符串的形式*/
 
             /*05.format就是当前时间的字符串形式，然后在和User中的时间比较
             *    比较两者的大小，*/
@@ -105,7 +109,9 @@ public class UserController {
 
                 /*10.把user中的数据放到cookie中，保存到浏览器上
                 *    字符串比较的话用equals的方式
-                *    记住密码*/
+                *    记住密码,下面的是把数据放到了cookie这个作用域中的
+                *    页面想要去验证数据是否正确的话，可以直接用cookie的方式
+                *    去获取数据*/
                 if ("true".equals(isRemPwd)){
                     Cookie c1 = new Cookie("loginAct",user2.getLoginAct());
                     c1.setMaxAge(10*24*60*60);

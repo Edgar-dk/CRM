@@ -240,7 +240,8 @@
 
 
 
-  <!--2.查询所有的用户信息-->
+  <!--2.查询所有的用户信息
+        点击一个页面把数据展示在页面上-->
   <select id="selectAllUser" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"/>

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class IndexController {
 
 
-    /*修订稿会死的撒*/
+    /*1.主页面跳转过来的地址*/
     @RequestMapping("/")
     public String  index(){
         /*01.请求转发*/

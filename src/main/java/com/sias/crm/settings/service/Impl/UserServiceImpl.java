@@ -28,7 +28,8 @@ public  class UserServiceImpl implements UserService {
         return user;
     }
 
-    /*2.查询全部的数据*/
+    /*2.查询全部的数据
+    *   点击一个页面，把数据展示在页面上*/
     @Override
     public List<User> queryAllUser() {
         return userMapper.selectAllUser();

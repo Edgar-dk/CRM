@@ -1,3 +1,10 @@
+
+
+<%--1.登陆页面的内容，这个登陆页面想到到主页面的话，也是
+      需要Controller的周转--%>
+
+
+
 <!DOCTYPE html><%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%

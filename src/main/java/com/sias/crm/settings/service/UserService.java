@@ -18,6 +18,7 @@ public interface UserService {
     User queryUserByLoginActAndPwd(Map map);
 
 
-    /*2.查询全部的数据*/
+    /*2.查询全部的数据
+    *   点击一个页面，把数据展示在页面上*/
     List<User> queryAllUser();
 }
