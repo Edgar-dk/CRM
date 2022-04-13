@@ -43,6 +43,8 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 		*
 		* 注意：在去创建一个Controller的时候，先看当前的页面是否在一个目录下面*/
 		window.open("workbench/main/index.do","workareaFrame");
+
+		/*退出系统的业务*/
 		$("#logoutBtn").click(function (){
 			window.location.href="settings/qx/user/logout.do";
 		});
@@ -151,6 +153,8 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 			<ul>
 				<li class="dropdown user-dropdown">
 					<a href="javascript:void(0)" style="text-decoration: none; color: white;" class="dropdown-toggle" data-toggle="dropdown">
+						<%--这个是一个作用域，可以把数据放在里面，只要服务器启动，访问浏览器上的网页
+						    就可以执行成功--%>
 						<span class="glyphicon glyphicon-user"></span>${sessionScope.sessionUser.name}<span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu">

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -38,7 +39,12 @@ public class ActivityController {
     @RequestMapping("/workbench/activity/index.do")
     public String index(HttpServletRequest request){
 
-        /*01.前面的是返回的数据*/
+        /*01.前面的是返回的数据
+        *    前面的user是查询出来的数据
+        *    虽然说查询出来了，是放在了实体类中
+        *    但是没有放在页面上去展示，这个所谓的展示过程
+        *    是，从页面上获取实体类中的字段，然后显示
+        *    在上面*/
         List<User> users = userService.queryAllUser();
         /*02.把得到的数据放到作用域中
         *    然后页面去数据的时候，在从作用域中取出来*/
@@ -96,5 +102,31 @@ public class ActivityController {
         /*4.这个对象里面已经设置了数据，只需要把这个数据放回到访问这个地址的子页面
         *   然后子页面获取里面的数据，根据里面的标志来判断成功于否*/
         return returnObject;
+    }
+
+
+
+    /*3.查询activity表中的总条数*/
+    @RequestMapping("/workbench/activity/queryActivityByConditionForPage.do")
+    public @ResponseBody Object queryActivityByConditionForPage(String name,String owner,
+                                                  String startDate,String endDate,
+                                                  int pageNo,int pageSize){
+        /*01.页面过来的数据，放在map中去接收*/
+        HashMap<Object, Object> map = new HashMap<>();
+        map.put("name",name);
+        map.put("owner",owner);
+        map.put("startDate", startDate);
+        map.put("endDate", endDate);
+        map.put("beginNo",(pageNo-1)*pageSize);
+        map.put("pageSize",pageSize);
+        List<Activity> activityList = activityService.queryActivityByConditionForPage(map);
+        int totalRows = activityService.queryActivityOfByCondition(map);
+
+        /*02.从数据库中查出来的数据，放在map中，最后返回的时候，转成
+        *    json字符串*/
+        HashMap<Object, Object> retMap = new HashMap<>();
+        retMap.put("activityList",activityList);
+        retMap.put("totalRows",totalRows);
+        return retMap;
     }
 }

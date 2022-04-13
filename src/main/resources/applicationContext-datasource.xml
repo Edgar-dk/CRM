@@ -18,7 +18,7 @@ http://www.springframework.org/schema/beans ">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property name="username" value="root"/>
         <property name="password" value="root"/>
-        <property name="url" value="jdbc:mysql://127.0.0.1:3306/crm2008?useSSL=false&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
+        <property name="url" value="jdbc:mysql://127.0.0.1:3306/crm?useSSL=false&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
     </bean>
 
 
@@ -26,9 +26,8 @@ http://www.springframework.org/schema/beans ">
 
     <!-- 2.配置SqlSessionFactory
            就是使用Mybatis来操作数据库，把数据库的
-           相关信心填写在Mybatis的文件中
-           其实这个文件也可以写在Mybatis的配置文件中
-           但是写在这里也是可以的，最后，直接从外部引入一个地址就可以了-->
+           相关信息填写在Mybatis的文件中
+           -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <!-- 必须注入属性dataSource -->
         <property name="dataSource" ref="dataSource"/>
@@ -72,7 +71,7 @@ http://www.springframework.org/schema/beans ">
 
     <!-- 4.mapper注解扫描器配置,扫描@MapperScan注解,自动生成代码对象
            就是扫描哪写基本的接口，去动态的访问数据库（生成操作数据库的代码）
-           目的：因为你写了一个基本的操作数据的方式，所以需要扫描进来之后才可以使用-->
+           目的：你写一个操作数据的接口，这个接口需要实现类，实现类在去操作数据库-->
     <bean id="mapperScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.sias.crm.settings.mapper,
                                             com.sias.crm.workbench.mapper"/>

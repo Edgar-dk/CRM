@@ -6,13 +6,17 @@ import com.sias.crm.workbench.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author Edgar
  * @create 2022-04-04 13:49
  * @faction:
  */
 @Service("activityService")
-public class ActivityServiceImpl implements ActivityService {
+public
+class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     private ActivityMapper activityMapper;
@@ -23,5 +27,19 @@ public class ActivityServiceImpl implements ActivityService {
 
         int i = activityMapper.insertActivity(activity);
         return i;
+    }
+
+    /*2.实现分页查询数据
+    *   查询的是数据列表*/
+    @Override
+    public List<Activity> queryActivityByConditionForPage(Map map) {
+        return activityMapper.selectActivityByConditionForPage(map);
+    }
+
+
+    /*3.查询总的条数*/
+    @Override
+    public int queryActivityOfByCondition(Map map) {
+        return activityMapper.selectCountOfActivityByCondition(map);
     }
 }

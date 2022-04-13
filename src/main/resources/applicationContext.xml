@@ -17,7 +17,9 @@ http://www.springframework.org/schema/aop
 http://www.springframework.org/schema/aop/spring-aop.xsd">
     <!-- 加载系统配置文件
     <context:property-placeholder location="classpath:*.properties" />-->
-    <!-- 扫描注解 -->
+    <!-- 扫描注解
+         本身所的类，都是需要去创建对象的，因为，个个类都需要在其他的类中调用
+         自身的方法，需要去创建好对象之后，在去注入，在调用自身的方法-->
     <context:component-scan base-package="com.sias.crm.settings.service" />
     <context:component-scan base-package="com.sias.crm.workbench.service" />
     <!-- 导入数据相关配置 -->
