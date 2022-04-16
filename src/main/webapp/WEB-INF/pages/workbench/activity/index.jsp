@@ -12,14 +12,15 @@
     <meta charset="UTF-8">
 
     <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
-    <link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css"
-          rel="stylesheet"/>
+    <link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet"/>
+    <link  rel="stylesheet" type="text/css" href="jquery/bs_pagination-master/css/jquery.bs_pagination.min.css">
 
     <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
     <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
-    <script type="text/javascript"
-            src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="jquery/bs_pagination-master/js/jquery.bs_pagination.min.js"></script>
+    <script type="text/javascript" src="jquery/bs_pagination-master/localization/en.js"></script>
 
     <script type="text/javascript">
 
@@ -100,6 +101,7 @@
                         if (data.code == "1") {
                             /*关闭模态窗口*/
                             $("#createActivityModal").modal("hide");
+                            queryActivityByConditionForPage(1,$("#demo_page1").bs_pagination('getOption','rowsPerPage'));
                         } else {
                             alert(data.message);
                             $("#createActivityModal").modal("show");
@@ -120,18 +122,29 @@
                 clearBtn: true,//在下面显示清空按钮
             });
 
-            /*在点击市场活动这个页面的时候，会加载这个函数，这个查询数据的函数也会执行*/
-            queryActivityByConditionForPage();
+            /*在点击市场活动这个页面的时候，会加载这个函数
+            * 执行的是查询页面信息的作用（不是点击查询按钮）*/
+            queryActivityByConditionForPage(1,10);
 
             /*给查询事件，加上一个按钮，点击按钮的时候会查询出该有的数据*/
             $("#queryActivityBtn").click(function () {
                 /*一个函数去调用另外一个函数，直接在一个函数中
-                * 写上另外一个函数的名字即可*/
-                queryActivityByConditionForPage();
+                * 写上另外一个函数的名字即可
+                * 其中参数也可以是一个函数
+                * 为什么参数是一个函数，因为在更改了每页显示的条数的
+                * 时候，这个页面的数据会刷新，刷新的过程是从新排列数据
+                * 排列数据需要执行函数，这个函数，只能执行查询数据的函数
+                * 参数也是需要有特别之处的，需要加上当前页面条数限制，getOption就是
+                * 这个限制，使用等前更改的数据，为什么一更改可以获取到呢，因为bs_pagination这个
+                * 文本库作用页面上，直接获取到了上一次数据的更新，使用即可使用
+                * 然后加上限制条件，使用当前的
+                * 在走一遍查询（这个查询的数据可能在持久层框架上的缓存中
+                * 为了防止多次的查询数据），*/
+                queryActivityByConditionForPage(1,$("#demo_page1").bs_pagination('getOption','rowsPerPage'));
             });
         });
 
-        function queryActivityByConditionForPage() {
+        function queryActivityByConditionForPage(pageNo,pageSize) {
             /*按照文本框中的条件查询
 
             收集参数，显示在页面上,
@@ -146,8 +159,8 @@
             var endDate = $("#query-endDate").val();
 
             /*查询第一页的数据，每一页数据显示10条*/
-            var pageNo = 1;
-            var pageSize = 10;
+            // var pageNo = 1;
+            // var pageSize = 10;
 
             /*向后台发送请求
             * 大括号是一个Js中的对象*/
@@ -168,7 +181,7 @@
                 * 可以从里面获取数据库中的数据*/
                 success: function (data) {
                     /*给这个文本框设置一个值*/
-                    $("#totalRowsB").text(data.totalRows);
+                    // $("#totalRowsB").text(data.totalRows);
 
                     /*分析：data过来的数据，每次都放在obj中，然后在下面去拼接字符串
                     * index是在执行一次的时候，这个变量加一，其实在下面也有一个
@@ -191,6 +204,49 @@
 
                     /*把一行数据放到Body中显示*/
                     $("#tBody").html(htmlStr);
+
+
+                    /*为了防止，获取的参数是一个小数
+                    * 增加判断条件，parseInt去除小数点后面的数*/
+                    var totalPages=1;
+                    if(data.totalRows%pageSize==0){
+                        totalPages=data.totalRows/pageSize;
+                    }else {
+                        totalPages=parseInt(data.totalRows/pageSize)+1;
+                    }
+
+
+                    $("#demo_page1").bs_pagination({
+                        currentPage:pageNo,//当前的页号
+
+                        rowsPerPage:pageSize,//每页显示的条数，
+                        totalRows:data.totalRows,//总条数
+                        totalPages:totalPages,//总页数，必填的，可以自己更改
+
+                        visiblePageLinks: 10,//最多可以显示的卡片数，
+                        showGoToPage: true,//默认是否显示可以跳转的页数，默认是true可以不用，也可以使用，不使用可以在页面上没有太多的地方
+                        showRowsPerPage: true,//是否显示每页显示的条数，默认是true，可以根据需求更改
+                        showRowsInfo: true,//是否显示记录的信息，某人true
+
+
+
+                        /*分析：
+                        * 结合上面的和下面的一块去分析，上面的是在执行这个页面的时候，直接加载这个页面
+                        * 执行上面的一个函数，显示在页面上的形式，就按照上面的参数显示，然后下面的代码也会执行
+                        event是切换事件的本身，pageObj是翻页对象，里面记录了所有的翻页信息，同时也可以获取翻页的信息的
+                        当用户更改页面上显示的条数，会从页面上获取数据，因为pageObj本身，就是这个bs_pagination对象
+                        * 一旦bs_pagination这个对象里面的数据发生了改变，pageObj会立即获取数据，然后传递参数执行
+                        * 因为上面一层最先执行的是bs_pagination，
+                        ，这个时候，可能会有一个问题，为什么在切换数据的时候，会执行呢，因为这个切换页号的是一个文本框文本框
+                        * 一执行，就把自带的id执行，上面的js代码中，有js代码，然后获取执行的数据，传递给下面函数的参数，
+                        * 对于pageObj对象而言，是可以获取到这里面的参数的，然后把获取
+                        到的数据传递给后台。在从数据库中查询数据，最后显示在页面上当切换了页面时，首先执行下面的一个函数，里面的参数pageObj获取
+                        *
+                        * 在第一次传递过来参数的时候，这个位置上，会再次执行一次，*/
+                        onChangePage:function (event,pageObj){
+                            queryActivityByConditionForPage(pageObj.currentPage,pageObj.rowsPerPage);
+                        }
+                    });
                 }
             });
         }
@@ -473,9 +529,10 @@
                 </tr>--%>
                 </tbody>
             </table>
+            <div id="demo_page1"></div>
         </div>
 
-        <div style="height: 50px; position: relative;top: 30px;">
+       <%-- <div style="height: 50px; position: relative;top: 30px;">
             <div>
                 <button type="button" class="btn btn-default" style="cursor: default;">共<b id="totalRowsB">50</b>条记录
                 </button>
@@ -509,7 +566,7 @@
                     </ul>
                 </nav>
             </div>
-        </div>
+        </div>--%>
 
     </div>
 
