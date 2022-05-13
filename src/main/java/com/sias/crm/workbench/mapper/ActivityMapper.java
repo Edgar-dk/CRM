@@ -55,18 +55,36 @@ public interface ActivityMapper {
     int updateByPrimaryKey(Activity record);
 
 
-
-    /*1.保存创建的员工信息
+    /*1.插入数据
+        保存创建的员工信息
     *   放数据的形式也是以对象的形式去添加的*/
     int insertActivity(Activity activity);
 
 
+    /*2.删除数据
+        根据id去批量的删除数据*/
+    int deleteActivityByIds(String [] ids);
 
-    /*2.查询数据
+
+
+    /*3.查询数据
     *   根据条件分页查询数据列表*/
     List<Activity> selectActivityByConditionForPage(Map map);
 
 
-    /*3.查询数据库中activity这张表的总条数*/
+    /*4.查询市场活动列表的总条数
+        查询数据库中activity这张表的总条数*/
     int selectCountOfActivityByCondition(Map map);
+
+
+    /*5.根据条件去查询数据
+    *
+    *
+    *   目的是为了修改数据，需要先查出来，在去修改数据
+    *   因为页面上的数据不完整*/
+    Activity selectActivityById(String id);
+
+
+    /*6.保存修改市场活动的信息*/
+    int updateActivity(Activity activity);
   }

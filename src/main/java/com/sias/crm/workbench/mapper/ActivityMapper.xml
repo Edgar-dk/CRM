@@ -288,6 +288,47 @@
       </if>
     </where>
   </select>
+
+
+
+
+  <!--4.根据id去数据库中批量的删除数据
+        insert update delete会自动的返回结果
+
+        如果说删除的是一个id，直接id=#{id}，删除多个的话
+        用in的形式，至于删除哪一个，需要很多的id去遍历
+        出来，然后在放到一个大的字符串里，这个字符串也是需要
+        有规定的，例如用一个括号阔起来
+        array是数组，过来的string，过来一个放到
+        array中，array在放到id中，id在传递#{id}中
+        最后在放到大的字符串中，放完之后在去操作数据库-->
+  <delete id="deleteActivityByIds" parameterType="string" >
+    delete from tbl_activity where id in
+    <foreach collection="array" item="id" separator="," open="(" close=")">
+      #{id}
+    </foreach>
+  </delete>
+
+
+  <!--5.根据条件去查询数据
+
+        目的是为了修改数据，因为页面上的数据不完整-->
+  <select id="selectActivityById" parameterType="string" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List"/>
+    from tbl_activity
+    where id=#{id}
+  </select>
+
+
+
+  <!--6.保存修改的市场活动信息-->
+  <update id="updateActivity" parameterType="com.sias.crm.workbench.domain.Activity" >
+    update tbl_activity
+    set owner=#{owner},name =#{name},start_date=#{startDate},end_date=#{endDate},cost=#{cost},description=#{description},
+        edit_time=#{editTime},edit_by=#{editBy}
+    where id=#{id}
+  </update>
 </mapper>
 
 

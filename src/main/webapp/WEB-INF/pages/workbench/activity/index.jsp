@@ -142,6 +142,228 @@
                 * 为了防止多次的查询数据），*/
                 queryActivityByConditionForPage(1,$("#demo_page1").bs_pagination('getOption','rowsPerPage'));
             });
+
+
+            /*分析：当选择这个按钮的时候，执行下面函数，
+            选择的这个按钮是一个标签，然后在根据选择的这个标签
+            在去选择另外一个标签，就使得这两个标签之间可以相互的联系了，在第一个
+            个标签里面操作第二个标签，所谓的操作，就是对文本框的操作，可以是文本框中的数据
+            改变，还可以是这个文本和另外的一个文本联系
+            * tBody后面空格表示，这个父标签下面的全部checkbox子标签（可以是多级的）
+            * 然后执行一个选择按钮，checked，使这个按钮为true，this.checked是当前checkAll这个标签
+            * */
+            $("#checkAll").click(function (){
+               $("#tBody input[type='checkbox']").prop("checked",this.checked);
+            });
+
+
+            /*子标签全部选中的话，主标签也要自动的选中，这样的算法，应该说任何一个
+            * 都是需要用到循环的，总的标签选中，可能需要分开写很多的标签，成立后在去使主标签自动选中，
+            * 这个是大脑中第一个反应，在以往的知识中
+            * 可以使用数组统计这很多的标签，然后在获取这很多，获取的很多
+            * 标签后，需要进去，就要用到click事件，进去之后，在去做下一步处理
+            * size是获取全部的checked（长度），本身是没有选中的，意思是全部的数组长度（有几个列表就有几个长度）、
+            * 后面的是获取选中的长度，相等的话，在使总的标签选中*/
+            /*$("#tBody input[type='checkbox']").click(function (){
+               if($("#tBody input[type='checkbox']").size()==$("#tBody input[type='checkbox']:checked").size() ){
+                   $("#checkAll").prop("checked",true);
+               }else {
+                   $("#checkAll").prop("checked",false);
+               }
+            });*/
+
+
+            /*给子标签加上按钮
+            * 动态的获取事件*/
+            $("#tBody").on("click","input[type='checkbox']",function (){
+                if($("#tBody input[type='checkbox']").size()==$("#tBody input[type='checkbox']:checked").size() ){
+                    $("#checkAll").prop("checked",true);
+                }else {
+                    $("#checkAll").prop("checked",false);
+                }
+            });
+
+
+            /*删除市场活动
+            * 点击这个按钮，在获取另外一个按钮（获取选中的按钮
+            * 这个选中的按钮怎么去获取，需要把按钮的数据写在这个标签里面）
+            * 然后在第一个按钮里面去操作第二个按钮
+            *
+            * 获取选中的按钮，统计选中的数据按钮（因为可能没有选中，所以需要判断一下）
+            * 选中的话，跳过循环，没有选中的话，执行循环，return结束下面的所有语句*/
+            $("#deleteActivityBtn").click(function (){
+               var checkedIds = $("#tBody input[type='checkbox']:checked");
+               if (checkedIds.size()==0){
+                   alert("请选择要删除的市场活动");
+                   return;
+               }
+
+
+
+               /*这个是一个阻塞函数，要么确定要么取消
+               * 确定和取消会返回一个数据，true的话
+               * 执行下面的代码，false的话，不往下面进行*/
+               if(window.confirm("确定要删除数据吗？")){
+
+
+
+
+
+                   /*
+                     按钮中很多的数据，需要一点一点的遍历到一个大的数组中
+
+                   先定一个空的字符串，each循环，每一次从checkedIds取一个数据
+                   * 放到function函数中，this表示checkedIds，表示从checked中
+                   * 取出哪一个id，放到一个大的ids数组中，这个大的数组中，数据的形式
+                   * 是，id=xx,id=xx，只是这样的数据显示在了数组中，最后在
+                   * 截取这个数组的长度，把最后一个字符截取掉，在从新赋值给ids把
+                   * 旧的数据覆盖掉。一并把数组传递到
+                   * 后台，然后在把数组传递到持久层，在一 一的删除数据，*/
+                   var ids="";
+                   $.each(checkedIds,function (){
+                       ids+="id="+this.value+"&";
+                   });
+                   ids=ids.substr(0,ids.length-1);
+                   $.ajax({
+                       url:'workbench/activity/deleteActivityByIds.do',
+                       data:ids,
+                       type:'post',
+                       dataType:'json',
+                       success:function (data){
+                           /*删除数据成功之后，把成功的标致传递到页面上
+                           * 页面根据这个标志，在从新刷新一个下面，这个刷新的
+                           * 过程是，在从数据库中查一遍数据（缓存中）*/
+                           if (data.code=="1"){
+                               queryActivityByConditionForPage(1,$("#demo_page1").bs_pagination('getOption','rowsPerPage'));
+                           }else {
+                               alert(data.message);
+                           }
+                       }
+                   });
+               }
+
+            });
+
+
+            /*修改数据*/
+            $("#editActivityBtn").click(function (){
+                /*获取选中的文本，这个只是获取文本
+                * checkId.size是从文本中获取选中的个数
+                *
+                * 再次分析:$("#tBody input[type='checkbox']这个是列表中的
+                * 所有复选框（checked），后面加上:checked表示获取被选中的按钮，显然下面已经获取
+                * 到了，那么者获取到的是一个怎么样的数据，id存在checked中，下面的已经
+                * 把所有的按钮选中了，也就是说，这个所有的id被选择了，那么这个id在哪里呢
+                * 这个时候，可以想一想，那么多的id只能放在哪里，只有可能放在数组中呀，前面
+                * 数数组的名字，.size目的是为了获取里面的长度*/
+               var checkId=$("#tBody input[type='checkbox']:checked");
+                if (checkId.size()==0){
+                    alert("请选择要修改的市场活动");
+                    return;
+                }
+                if (checkId.size()>1){
+                    alert("每次只能选一个");
+                    return;
+                }
+
+                /*id存在checked中，怎么去获取这个id的具体
+                * 值，通过获取里面的val，就可以获取到id，获取到的这个
+                * id要干什么，当然是去查询数据，为什么去查询数据
+                * 因为显示在页面上的数据不完整，需要去查询完整的数据
+                * 在去显示在模态窗口上*/
+                var id =checkId[0].value;
+                $.ajax({
+                    url:'workBench/activity/queryActivityById.do',
+                    data:{
+                        id:id
+                    },
+                    type:'post',
+                    dataType:'json',
+                    success:function (data){
+                        /*查询到的把完整的数据，显示在模态窗口上
+                        * 数据都在data中，因此需要从data中先获取数据
+                        * 获取到的数据，在显示在模态窗口的文本框上*/
+                        $("#edit-id").val(data.id);
+                        $("#edit-marketActivityOwner").val(data.owner);
+                        $("#edit-marketActivityName").val(data.name);
+                        $("#edit-startTime").val(data.startDate);
+                        $("#edit-endTime").val(data.endDate);
+                        $("#edit-cost").val(data.cost);
+                        $("#edit-description").val(data.description);
+                        /*弹出模态窗口*/
+                        $("#editActivityModal").modal("show");
+                    }
+                });
+            });
+
+
+            /*更改显示在模态窗口上的数据
+            * 更改的过程是在页面上（用户的角度去
+            * 更改数据），下面是获取更改后的数据*/
+            $("#saveEditActivityBtn").click(function (){
+                var id=$("#edit-id").val();
+                var owner=$("#edit-marketActivityOwner").val();
+                var name=$.trim($("#edit-marketActivityName").val());
+                var startDate=$("#edit-startTime").val();
+                var endDate=$("#edit-endTime").val();
+                var cost=$.trim($("#edit-cost").val());
+                var description=$.trim($("#edit-description").val());
+                /*3.虽然说得到了数据，还是需要判断里面的数据
+               *   是否发生错误，是否为空*/
+                /*看字符里面是否为空，直接双等于号*/
+                if (owner == "") {
+                    alert("所有者不可以为空");
+                    /*上面的条件成立的话，执行到了return的时候
+                    * 直接把下面js的代码，停止执行*/
+                    return;
+                }
+                if (name == "") {
+                    alert("名称不可以为空");
+                    return;
+                }
+                if (startDate != "" && endDate != "") {
+                    //使用字符串的大小代替日期的大小
+                    if (endDate < startDate) {
+                        alert("结束日期不能比开始日期小");
+                        return;
+                    }
+                }
+                /*验证输入的成本的格式*/
+                var regExp = /^(([1-9]\d*)|0)$/;
+                if (!regExp.test(cost)) {
+                    alert("成本只能为非负整数");
+                    return;
+                }
+                if(description == ""){
+                    alert("描述不可以为空");
+                    return;
+                }
+
+                /*从表单上获取的数据，向后台发送*/
+                $.ajax({
+                    url:"workBench/activity/saveEditActivity.do",
+                    data:{
+                        id:id,
+                        owner:owner,
+                        name:name,
+                        startData:startDate,
+                        endDate:endDate,
+                        description:description,
+                    },
+                    type:'post',
+                    dataType:'json',
+                    success:function(data) {
+                        if(data.code=="1"){
+                            $("#editActivityModal").modal("hide");
+                            /*后面的参数，含义是当查询出数据之后，显示在当前页面上*/
+                            queryActivityByConditionForPage($("#demo_page1").bs_pagination('getOption','currentPage'),$("#demo_page1").bs_pagination('getOption','rowsPerPage'));
+                        }else {
+                            alert(data.message);
+                            $("#editActivityModal").modal("show");
+                        }
+                    }
+                });
+            });
         });
 
         function queryActivityByConditionForPage(pageNo,pageSize) {
@@ -201,9 +423,15 @@
                         htmlStr += "<td>" + obj.endDate + "</td>";
                         htmlStr += "</tr>";
                     });
-
                     /*把一行数据放到Body中显示*/
                     $("#tBody").html(htmlStr);
+
+                    /*取消全选按钮
+                    * 是为了刚查询的数据，当新的数据过来的时候
+                    * 新的数据不会带上全选按钮，因为on是动态的
+                    * 所以需要取消总的全选按钮*/
+                    $("#checkAll").prop("checked",false);
+
 
 
                     /*为了防止，获取的参数是一个小数
@@ -268,7 +496,6 @@
             <div class="modal-body">
 
                 <form id="createActivityFrom" class="form-horizontal" role="form">
-
                     <div class="form-group">
                         <label for="create-marketActivityOwner" class="col-sm-2 control-label">所有者<span
                                 style="font-size: 15px; color: red;">*</span></label>
@@ -338,15 +565,15 @@
             <div class="modal-body">
 
                 <form class="form-horizontal" role="form">
-
+                    <input type="hidden" id="edit-id">
                     <div class="form-group">
                         <label for="edit-marketActivityOwner" class="col-sm-2 control-label">所有者<span
                                 style="font-size: 15px; color: #006aff;">*</span></label>
                         <div class="col-sm-10" style="width: 300px;">
                             <select class="form-control" id="edit-marketActivityOwner">
-                                <option>zhangsan</option>
-                                <option>lisi</option>
-                                <option>wangwu</option>
+                                <c:forEach items="${users}" var="u">
+                                    <option value="${u.id}">${u.name}</option>
+                                </c:forEach>
                             </select>
                         </div>
                         <label for="edit-marketActivityName" class="col-sm-2 control-label">名称<span
@@ -375,9 +602,9 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="create-description" class="col-sm-2 control-label">描述</label>
+                        <label for="edit-description" class="col-sm-2 control-label">描述</label>
                         <div class="col-sm-10" style="width: 81%;">
-                            <textarea class="form-control" rows="3" id="create-description"></textarea>
+                            <textarea class="form-control" rows="3" id="edit-description"></textarea>
                         </div>
                     </div>
 
@@ -386,7 +613,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal">更新</button>
+                <button type="button" class="btn btn-primary" id="saveEditActivityBtn">更新</button>
             </div>
         </div>
     </div>
@@ -482,10 +709,10 @@
                 <button type="button" class="btn btn-primary" id="createActivityBtn"><span
                         class="glyphicon glyphicon-plus"></span> 创建
                 </button>
-                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span
+                <button type="button" class="btn btn-default" id="editActivityBtn"><span
                         class="glyphicon glyphicon-pencil"></span> 修改
                 </button>
-                <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+                <button type="button" id="deleteActivityBtn" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
             </div>
             <div class="btn-group" style="position: relative; top: 18%;">
                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#importActivityModal">
@@ -501,16 +728,16 @@
         </div>
         <div style="position: relative;top: 10px;">
             <table class="table table-hover">
-                <thead>
-                <tr style="color: #B3B3B3;">
-                    <td><input type="checkbox"/></td>
+                <thead >
+                <tr style="color: #B3B3B3;" >
+                    <td><input type="checkbox" id="checkAll"/></td>
                     <td>名称</td>
                     <td>所有者</td>
                     <td>开始日期</td>
                     <td>结束日期</td>
                 </tr>
                 </thead>
-                <tbody id="tBody">
+                <tbody id="tBody" >
                 <%--<tr class="active">
                     <td><input type="checkbox"/></td>
                     <td><a style="text-decoration: none; cursor: pointer;"

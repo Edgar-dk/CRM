@@ -8,6 +8,7 @@ import com.sias.crm.settings.domain.User;
 import com.sias.crm.settings.service.UserService;
 import com.sias.crm.workbench.domain.Activity;
 import com.sias.crm.workbench.service.ActivityService;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -129,4 +130,71 @@ public class ActivityController {
         retMap.put("totalRows",totalRows);
         return retMap;
     }
+
+    /*4.删除用户的数据*/
+    @RequestMapping("/workbench/activity/deleteActivityByIds.do")
+    @ResponseBody
+    public Object deleteActivityByIds(String [] id){
+
+        /*01.成功与否的标志*/
+        ReturnObject returnObject = new ReturnObject();
+
+
+        /*方式删除数据的时候出现异常*/
+        try {
+            int ret = activityService.deleteActivityByIds(id);
+            if (ret>0){
+                /*把成功的消息放回到页面上，返回的
+                * 过程在return后面，谁访问的，就返回给谁*/
+                returnObject.setCode(Constant.ReTURN_OBJECT_CODE_SUCCESS);
+            }else {
+                returnObject.setCode(Constant.ReTURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("系统忙，请稍后重试...");
+            }
+        }catch (Exception e){
+            returnObject.setCode(Constant.ReTURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("系统忙，请稍后重试...");
+        }
+        return returnObject;
+    }
+
+
+    /*5.根据条件去查询数据
+    *
+    *   目的是为了修改页面上的数据
+    *   因为页面上的数据不完整，所以需要从新查一遍数据*/
+    @RequestMapping("/workBench/activity/queryActivityById.do")
+    @ResponseBody
+    public Object queryActivityById(String id){
+        Activity activity = activityService.queryActivityById(id);
+        return activity;
+    }
+
+
+    /*6.保存修改的信息*/
+    @RequestMapping(value = "/workBench/activity/saveEditActivity.do")
+    @ResponseBody
+    public Object saveEditActivity(Activity activity ,HttpSession session ){
+        /*直接从这个作用域中去获取数据*/
+        User user=(User) session.getAttribute(Constant.SESSION_USER);
+        activity.setEditTime(DataUtils.formateDateTime(new Date()));
+        activity.setEditBy(user.getId());
+        ReturnObject returnObject = new ReturnObject();
+        try {
+            int res = activityService.saveEditActivity(activity);
+            if(res>0){
+                returnObject.setCode(Constant.ReTURN_OBJECT_CODE_SUCCESS);
+            }else {
+                returnObject.setCode(Constant.ReTURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("系统忙，请稍后重试");
+            }
+        }catch (Exception e){
+            returnObject.setCode(Constant.ReTURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("系统忙，请稍后重试");
+        }
+        return returnObject;
+    }
+
+
+
 }

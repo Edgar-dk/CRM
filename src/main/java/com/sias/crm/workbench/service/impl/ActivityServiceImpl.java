@@ -15,8 +15,7 @@ import java.util.Map;
  * @faction:
  */
 @Service("activityService")
-public
-class ActivityServiceImpl implements ActivityService {
+public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     private ActivityMapper activityMapper;
@@ -42,4 +41,28 @@ class ActivityServiceImpl implements ActivityService {
     public int queryActivityOfByCondition(Map map) {
         return activityMapper.selectCountOfActivityByCondition(map);
     }
+
+
+    /*4.删除用户数据*/
+    @Override
+    public int deleteActivityByIds(String[] ids) {
+        return activityMapper.deleteActivityByIds(ids);
+    }
+
+    /*5.根据条件去查询数据
+    *
+    *   目的是为了修改数据，页面上的数据不完整*/
+    @Override
+    public Activity queryActivityById(String id) {
+        return activityMapper.selectActivityById(id);
+    }
+
+
+    /*6.保存修改市场活动的信息*/
+    @Override
+    public int saveEditActivity(Activity activity) {
+        return activityMapper.updateActivity(activity);
+    }
+
+
 }
